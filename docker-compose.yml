@@ -1,0 +1,31 @@
+services:
+  api:
+    build:
+      context: .
+      target: production
+    image: trace-audit-api:latest
+    environment:
+      PORT: "8080"
+      HOST: "0.0.0.0"
+    ports:
+      # Host-side port is configurable via API_PORT (defaults to 8080).
+      - "${API_PORT:-8080}:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 3s
+
+  verify:
+    build:
+      context: .
+      target: verify
+    image: trace-audit-verify:latest
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      API_URL: "http://api:8080"
+    restart: "no"

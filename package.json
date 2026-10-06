@@ -1,0 +1,20 @@
+{
+  "name": "trace-causality-audit",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "tsc -p tsconfig.test.json && node --test dist-test/test/audit.test.js dist-test/test/server.test.js",
+    "start": "node dist/server.js",
+    "smoke": "node scripts/smoke.mjs",
+    "verify": "npm test && npm run build && node scripts/smoke.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "typescript": "^7.0.2"
+  }
+}
