@@ -1,0 +1,20 @@
+{
+  "name": "trace-causal-audit",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Satellite TT&C distributed trace causal audit API (clock-skew aware)",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "fastify": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

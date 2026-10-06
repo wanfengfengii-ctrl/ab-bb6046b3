@@ -1,0 +1,38 @@
+services:
+  api:
+    build:
+      context: .
+      target: runtime
+    image: trace-causal-audit-api:latest
+    environment:
+      # Internal listen port inside the container.
+      PORT: "3000"
+      HOST: "0.0.0.0"
+    # Host port is overridable via the API_PORT environment variable.
+    ports:
+      - "${API_PORT:-3000}:3000"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "require('http').get('http://127.0.0.1:'+(process.env.PORT||3000)+'/health',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+    restart: unless-stopped
+
+  # One-shot service: waits until the API is healthy, runs tests, production
+  # build and HTTP smoke checks, then exits with the aggregate result code.
+  verify:
+    build:
+      context: .
+      target: verify
+    image: trace-causal-audit-verify:latest
+    environment:
+      BASE_URL: http://api:3000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: "no"
